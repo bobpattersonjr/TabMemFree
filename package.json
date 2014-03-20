@@ -28,6 +28,7 @@
   "dependencies": {
     "underscore": "^1.6.0",
     "browserify": "^3.33.0",
-    "async": "^0.2.10"
+    "async": "^0.2.10",
+    "nexttick": "^0.1.0"
   }
 }

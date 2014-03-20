@@ -4,6 +4,7 @@ var fs = require('fs');
 var child_process = require('child_process');
 var async = require('async');
 var browserify = require('browserify');
+var next = require('nexttick');
 
 
 var packageFile = require('./package.json');
@@ -51,6 +52,10 @@ function compileScripts(cb) {
 	async.map(list, function(filename, cb) {
 		var b;
 		var streamFrom, streamTo;
+
+		if (filename.indexOf('.js') !== filename.length - 3) {
+			return next(cb);
+		}
 
 		b = browserify(DIR_SOURCE + filename);
 
