@@ -1,56 +1,75 @@
-/**
- * Created by IntelliJ IDEA.
- * User: Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com
- * Date: 27/08/11
- * Time: 16:15
- * To change this template use File | Settings | File Templates.
- */
-/*jslint browser: true, devel: true*/
-/*global chrome*/
+'use strict';
 
-(function () {
-    "use strict";
-    var title, href, link;
-//    Parse window.location.hash, get params encoded with encodeURIComponent, source string is:
-//    https://tabmemfree.appengine.com/blank.html#title=___&icon=___
-    function getParam(name) {
-        var res = '',
-            url = window.location.hash,
-            start = url.indexOf(name),
-            end = url.indexOf('&', start);
-        if (start > 0) {
-            start += name.length + 1;
-            if (end > 0) {
-                res = url.substring(start, end);
-            } else {
-                res = url.substring(start);
-            }
-        }
+var coder = require('./lib/coder');
 
-        return decodeURIComponent(res);
-    }
+var params;
+var messsageHandlers = {};
 
-    //get message for history alteration: back
-    chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
-        if (request['do'] === 'load') {
-            sendResponse('loaded');
-            history.back();
-        }
-    });
+function setTitle(title) {
+	document.title = title;
+}
 
-    //set old title
-    title = getParam('title');
-    if (title) {
-        document.title = title;
-    }
+function setFavicon(url) {
+	var link = document.createElement('link');
+	link.type = 'image/x-icon';
+	link.rel = 'icon';
+	link.href = url;
+	document.getElementsByTagName('head')[0].appendChild(link);
+}
 
-    //set old favicon
-    href = getParam('icon');
-    if (href) {
-        link = document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'icon';
-        link.href = href;
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }
-})();
+function subscribe() {
+	chrome.extension.onRequest.addListener(function(request, sender, response) {
+		if (!messsageHandlers[request.cmd]) {
+			return response(makeResponse(request.cmd, null, 'no handler'));
+		}
+
+		messsageHandlers[request.cmd](request, sender, response);
+	});
+}
+
+function makeResponse(cmd, result, error) {
+	var out = {};
+	out.cmd = cmd;
+	if (result !== undefined) {
+		out.result = result;
+	}
+	if (error !== undefined) {
+		out.error = error;
+	}
+}
+
+messsageHandlers.unpark = function(request, sender, response) {
+	if (history.length < 2 && !params.url) {
+		return response(makeResponse(request.cmd, null, 'empty history, no params.url'));
+	}
+
+	response(makeResponse(request.cmd));
+	if (history.length < 2) {
+		return location.assign(params.url);
+	}
+
+	return history.back();
+}
+
+
+// old location: https://tabmemfree.appengine.com/blank.html#title=___&icon=___
+// new location: https://tabmemfree.appengine.com/blank.html#JSON
+//TODO: support transition from old location format
+//TODO: support favicon greyscaling
+function load() {
+	var hash = (hash.length) ? hash.substr(1) : '';
+
+	try {
+		params = coder.decode(hash) || {};
+	} catch (e) {
+		params = {};
+	}
+
+	setTitle(params.title || params.url);
+	if (params.icon) {
+		setFavicon(params.icon);
+	}
+	subscribe();
+}
+
+load();
