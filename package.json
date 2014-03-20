@@ -1,0 +1,32 @@
+{
+  "name": "TabMemFree",
+  "version": "0.2.0",
+  "description": "TabMemFree Chrome extension source code",
+  "scripts": {
+  	"buildExtension": "node build_extension.js",
+  	"buildServer": "node build_server.js",
+  	"deployServer": "node deploy_server.js",
+    "test": "nodeunit test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glukki/TabMemFree.git"
+  },
+  "keywords": [
+    "tabmemfree",
+    "chrome",
+    "extension",
+    "free",
+    "ram"
+  ],
+  "author": "Vitaliy (glukki)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/glukki/TabMemFree/issues"
+  },
+  "homepage": "https://github.com/glukki/TabMemFree",
+  "dependencies": {
+    "underscore": "^1.6.0",
+    "browserify": "^3.33.0"
+  }
+}
