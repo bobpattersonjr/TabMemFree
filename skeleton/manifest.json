@@ -31,7 +31,7 @@
 	"incognito": "spanning",
 	"minimum_chrome_version": "18",
 	"offline_enabled": true,
-	"omonibox": {
+	"omnibox": {
 		"keyword": "park"
 	},
 	"options_page": "fancy-settings/source/index.html",

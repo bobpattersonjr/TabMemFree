@@ -1,3 +1,5 @@
+"use strict";
+
 //TODO: investigate chrome.storage api - http://developer.chrome.com/extensions/storage
 //TODO: white/black-list of urls to park
 //TODO: gather stats of tabs resources usage by chrome.processes - http://developer.chrome.com/extensions/processes
@@ -15,7 +17,7 @@
 // constants
 var PARSE_DECIMAL = 10;
 var DEFAULT_SETTINGS = {
-	'active': true,
+	'active': false,
 	'timeout': 15 * 60, // seconds
 	'tick': 60, // seconds
 	'pinned': true
@@ -31,7 +33,6 @@ var settings = {};
 
 // park idle tab if it is not parked yet
 function parkTab(tab) {
-	"use strict";
 	//check if parked
 	if (tab.url.substring(0, tab.url.indexOf('#')) !== PARK_URL) {
 		// forward tab to blank.html
@@ -50,7 +51,6 @@ function parkTab(tab) {
 
 // simple timer - update inactivity time, unload timeouted tabs
 function tick() {
-	"use strict";
 	//sync
 	chrome.windows.getAll({
 		'populate': true
@@ -92,7 +92,6 @@ function tick() {
 
 // init function
 function init() {
-	"use strict";
 	// load exclusion list
 	// get all windows with tabs
 	chrome.windows.getAll({
@@ -128,7 +127,6 @@ function init() {
 // Events
 // tabs.onCreated - add to list
 chrome.tabs.onCreated.addListener(function(tab) {
-	"use strict";
 	tabs[tab.id] = {
 		'id': tab.id,
 		'time': 0
@@ -137,7 +135,6 @@ chrome.tabs.onCreated.addListener(function(tab) {
 
 // tabs.onRemoved - load if unloaded, remove from list
 chrome.tabs.onRemoved.addListener(function(tabId) {
-	"use strict";
 	var i;
 	for (i in tabs) {
 		if (tabs.hasOwnProperty(i) && i === tabId) {
@@ -149,7 +146,6 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 
 // tabs.onSelectionChanged - load if unloaded, reset inactivity
 chrome.tabs.onSelectionChanged.addListener(function(tabId) {
-	"use strict";
 	var i;
 	chrome.tabs.get(tabId, function(tab) {
 		if (tab.url.substring(0, tab.url.indexOf('#')) === PARK_URL) {
@@ -170,7 +166,6 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId) {
 
 // UI
 chrome.browserAction.onClicked.addListener(function() {
-	"use strict";
 	if (ticker) {
 		//clear
 		clearInterval(ticker);
@@ -191,7 +186,6 @@ chrome.browserAction.onClicked.addListener(function() {
 
 // starter
 function start() {
-	"use strict";
 	settings = new Store('settings', DEFAULT_SETTINGS);
 
 	if (settings.get('active')) {
