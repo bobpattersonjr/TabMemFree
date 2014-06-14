@@ -1,6 +1,7 @@
 {
     "name": "TabMemFreeFork",
     "version": "1.0",
+    "manifest_version": 2,
 
     "description": "Lower RAM and CPU consumption by parking idle tabs",
     "icons": {
