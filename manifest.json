@@ -1,6 +1,6 @@
 {
-    "name": "TabMemFree",
-    "version": "0.1.3.2",
+    "name": "TabMemFreeFork",
+    "version": "1.0",
 
     "description": "Lower RAM and CPU consumption by parking idle tabs",
     "icons": {
